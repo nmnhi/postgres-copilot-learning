@@ -3,6 +3,7 @@ package com.learning.service;
 import com.learning.entity.User;
 import com.learning.repository.UserRepository;
 import java.util.List;
+import java.util.Optional;
 
 public class UserService {
 
@@ -27,11 +28,11 @@ public class UserService {
     repository.deleteById(id);
   }
 
-  public User getUSerById(int id) {
+  public Optional<User> getUSerById(int id) {
     return repository.findById(id);
   }
 
-  public User getUserByEmail(String email) {
+  public Optional<User> getUserByEmail(String email) {
     return repository.findByEmail(email);
   }
 }

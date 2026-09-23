@@ -2,6 +2,7 @@ package com.learning;
 
 import com.learning.entity.User;
 import com.learning.service.UserService;
+import java.util.Optional;
 
 public class App {
 
@@ -27,10 +28,10 @@ public class App {
     //List<User> users1 = service.getAllUsers();
     //users1.forEach(System.out::println);
 
-    User user = service.getUSerById(8);
+    Optional<User> user = service.getUSerById(8);
     System.out.println(user);
 
-    User user1 = service.getUserByEmail("nmnhi@tma.com.vn");
+    Optional<User> user1 = service.getUserByEmail("nmnhi@tma.com.vn");
     System.out.println(user1);
   }
 }
