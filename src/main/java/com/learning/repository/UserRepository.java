@@ -1,106 +1,167 @@
 package com.learning.repository;
 
+import com.learning.entity.User;
+import com.learning.util.DbConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.learning.entity.User;
-import com.learning.util.DbConnection;
+import java.util.Optional;
 
 public class UserRepository {
-	@SuppressWarnings("CallToPrintStackTrace")
-	public void save(User user) {
-		String sql = """
-				INSERT INTO users(full_name, email)
-				VALUES(?, ?)
-				""";
 
-		try (
-				Connection connection = DbConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
+  @SuppressWarnings("CallToPrintStackTrace")
+  public void save(User user) {
+    String sql = """
+        INSERT INTO users(full_name, email)
+        VALUES(?, ?)
+        """;
 
-			statement.setString(1, user.getFullName());
-			statement.setString(2, user.getEmail());
+    try (
+        Connection connection = DbConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
 
-			int rows = statement.executeUpdate();
+      statement.setString(1, user.getFullName());
+      statement.setString(2, user.getEmail());
 
-			System.out.println(rows + " row inserted");
+      int rows = statement.executeUpdate();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+      System.out.println(rows + " row inserted");
 
-	@SuppressWarnings("CallToPrintStackTrace")
-	public List<User> findAll() {
-		List<User> users = new ArrayList<>();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-		String sql = """
-				SELECT id,
-					full_name,
-					email
-				FROM users;
-				""";
+  @SuppressWarnings("CallToPrintStackTrace")
+  public List<User> findAll() {
+    List<User> users = new ArrayList<>();
 
-		try (Connection connection = DbConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql);
-				ResultSet rs = statement.executeQuery();) {
-			while (rs.next()) {
-				User user = new User();
+    String sql = """
+        SELECT id,
+        	full_name,
+        	email
+        FROM users;
+        """;
 
-				user.setId(rs.getInt("id"));
-				user.setFullName(rs.getString("full_name"));
-				user.setEmail(rs.getString("email"));
+    try (Connection connection = DbConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()) {
+      while (rs.next()) {
+        User user = new User();
 
-				users.add(user);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        user.setId(rs.getInt("id"));
+        user.setFullName(rs.getString("full_name"));
+        user.setEmail(rs.getString("email"));
 
-		return users;
-	}
+        users.add(user);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
-	@SuppressWarnings("CallToPrintStackTrace")
-	public void update(User user) {
-		String sql = """
-				UPDATE users
-				SET full_name = ?,
-						email = ?
-				WHERE id = ?
-				""";
+    return users;
+  }
 
-		try (Connection connection = DbConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setString(1, user.getFullName());
-			statement.setString(2, user.getEmail());
-			statement.setInt(3, user.getId());
+  @SuppressWarnings("CallToPrintStackTrace")
+  public void update(User user) {
+    String sql = """
+        UPDATE users
+        SET full_name = ?,
+        		email = ?
+        WHERE id = ?
+        """;
 
-			int rows = statement.executeUpdate();
-			System.out.println(
-					rows + " row updated");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    try (Connection connection = DbConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setString(1, user.getFullName());
+      statement.setString(2, user.getEmail());
+      statement.setInt(3, user.getId());
 
-	@SuppressWarnings("CallToPrintStackTrace")
-	public void deleteById(int id) {
-		String sql = """
-				DELETE FROM users
-				WHERE id = ?
-				""";
+      int rows = statement.executeUpdate();
+      System.out.println(
+          rows + " row updated");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-		try (Connection connection = DbConnection.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, id);
+  @SuppressWarnings("CallToPrintStackTrace")
+  public void deleteById(int id) {
+    String sql = """
+        DELETE FROM users
+        WHERE id = ?
+        """;
 
-			int rows = statement.executeUpdate();
-			System.out.println(rows + " row deleted");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    try (Connection connection = DbConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, id);
+
+      int rows = statement.executeUpdate();
+      System.out.println(rows + " row deleted");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @SuppressWarnings("CallToPrintStackTrace")
+  public Optional<User> findById(int id) {
+    String sql = """
+        SELECT id, full_name, email
+        FROM users
+        WHERE id = ?
+        """;
+
+    try (Connection connection = DbConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+      statement.setInt(1, id);
+      ResultSet result = statement.executeQuery();
+
+      if (result.next()) {
+        User user = new User();
+
+        user.setId(result.getInt("id"));
+        user.setFullName(result.getString("full_name"));
+        user.setEmail(result.getString("email"));
+
+        return Optional.of(user);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return Optional.empty();
+  }
+
+  @SuppressWarnings("CallToPrintStackTrace")
+  public Optional<User> findByEmail(String email) {
+    String sql = """
+        SELECT id, full_name, email
+        FROM users
+        WHERE email = ?
+        """;
+
+    try (Connection connection = DbConnection.getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql)
+    ) {
+      statement.setString(1, email);
+
+      ResultSet res = statement.executeQuery();
+
+      if (res.next()) {
+        User user = new User();
+        user.setId(res.getInt("id"));
+        user.setFullName(res.getString("full_name"));
+        user.setEmail(res.getString("email"));
+
+        return Optional.of(user);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return Optional.empty();
+  }
 }
