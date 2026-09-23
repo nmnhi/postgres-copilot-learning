@@ -85,4 +85,22 @@ public class UserRepository {
 			e.printStackTrace();
 		}
 	}
+
+	@SuppressWarnings("CallToPrintStackTrace")
+	public void deleteById(int id) {
+		String sql = """
+				DELETE FROM users
+				WHERE id = ?
+				""";
+
+		try (Connection connection = DbConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, id);
+
+			int rows = statement.executeUpdate();
+			System.out.println(rows + " row deleted");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

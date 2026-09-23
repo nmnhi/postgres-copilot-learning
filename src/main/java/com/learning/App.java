@@ -16,12 +16,17 @@ public class App {
         List<User> users = repository.findAll();
         users.forEach(System.out::println);
 
-        User user = new User(
-                9,
-                "Nguyen Van B Updated 1",
-                "updated@gmail.com");
-        repository.update(user);
+        // User user = new User(
+        // 10,
+        // "Nguyen Van B",
+        // "updated10@gmail.com");
 
+        // repository.update(user);
+
+        // List<User> users1 = repository.findAll();
+        // users1.forEach(System.out::println);
+
+        repository.deleteById(11);
         List<User> users1 = repository.findAll();
         users1.forEach(System.out::println);
     }
