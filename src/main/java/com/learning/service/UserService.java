@@ -1,6 +1,9 @@
 package com.learning.service;
 
 import com.learning.entity.User;
+import com.learning.exception.EmailAlreadyExistsException;
+import com.learning.exception.InvalidEmailException;
+import com.learning.exception.UserNotFoundException;
 import com.learning.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +13,20 @@ public class UserService {
   private final UserRepository repository = new UserRepository();
 
   public void create(User user) {
-    if (!user.getEmail().endsWith("@gmail.com")) {
-      throw new RuntimeException("Invalid email");
+    if (user.getEmail() == null || user.getEmail().isBlank()) {
+      throw new RuntimeException("Email is required");
     }
+
+    if (!user.getEmail().endsWith("@gmail.com")) {
+      throw new InvalidEmailException(
+          "Email " + user.getEmail() + " is invalid, the email should end with @gmail.com");
+    }
+
+    Optional<User> existingUser = repository.findByEmail(user.getEmail());
+    if (existingUser.isPresent()) {
+      throw new EmailAlreadyExistsException("Email " + user.getEmail() + " already exist");
+    }
+
     repository.save(user);
   }
 
@@ -21,10 +35,20 @@ public class UserService {
   }
 
   public void updateUser(User user) {
+    Optional<User> existingUser = repository.findById(user.getId());
+    if (existingUser.isEmpty()) {
+      throw new UserNotFoundException("User with id " + user.getId() + " not found");
+    }
+
     repository.update(user);
   }
 
   public void deleteUserById(int id) {
+    Optional<User> user = repository.findById(id);
+    if (user.isEmpty()) {
+      throw new UserNotFoundException("User with id " + id + " not found");
+    }
+
     repository.deleteById(id);
   }
 

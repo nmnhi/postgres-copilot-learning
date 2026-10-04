@@ -2,14 +2,15 @@ package com.learning;
 
 import com.learning.entity.User;
 import com.learning.service.UserService;
+import java.util.List;
 import java.util.Optional;
 
 public class App {
 
   public static void main(String[] args) {
     UserService service = new UserService();
-    //User user = new User(1, "Nguyen Minh A", "ab@gmail.com.vn");
-    //service.create(user);
+    User user = new User(1, "Nguyen Minh A", "ab@gmail.com");
+    service.create(user);
 
     //List<User> users = service.getAllUsers();
     //users.forEach(System.out::println);
@@ -28,10 +29,15 @@ public class App {
     //List<User> users1 = service.getAllUsers();
     //users1.forEach(System.out::println);
 
-    Optional<User> user = service.getUSerById(8);
-    System.out.println(user);
+    //Optional<User> user = service.getUSerById(8);
+    //System.out.println(user);
 
     Optional<User> user1 = service.getUserByEmail("nmnhi@tma.com.vn");
     System.out.println(user1);
+
+//    service.deleteUserById(100);
+
+    List<User> users = service.getAllUsers();
+    System.out.println(users);
   }
 }
