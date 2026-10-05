@@ -1,15 +1,16 @@
 package com.learning.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.learning.entity.User;
 import com.learning.exception.EmailAlreadyExistsException;
 import com.learning.exception.InvalidEmailException;
 import com.learning.exception.UserNotFoundException;
 import com.learning.repository.UserRepository;
-import java.util.List;
-import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 public class UserService {
 
@@ -18,6 +19,7 @@ public class UserService {
 
   public void create(User user) {
     logger.info("Create user with {}", user.getEmail());
+
     if (user.getEmail() == null || user.getEmail().isBlank()) {
       throw new RuntimeException("Email is required");
     }
@@ -33,6 +35,7 @@ public class UserService {
     }
 
     repository.save(user);
+    logger.info("Create new user successfully");
   }
 
   public List<User> getAllUsers() {
@@ -41,20 +44,26 @@ public class UserService {
 
   public void updateUser(User user) {
     Optional<User> existingUser = repository.findById(user.getId());
+
     if (existingUser.isEmpty()) {
+      logger.error("User not found with id {}", user.getId());
       throw new UserNotFoundException("User with id " + user.getId() + " not found");
     }
 
     repository.update(user);
+    logger.info("Update user with id {} successfully", user.getId());
   }
 
   public void deleteUserById(int id) {
     Optional<User> user = repository.findById(id);
+
     if (user.isEmpty()) {
+      logger.error("User not found with id {}", id);
       throw new UserNotFoundException("User with id " + id + " not found");
     }
 
     repository.deleteById(id);
+    logger.info("Delete user with userId {} successfully", id);
   }
 
   public Optional<User> getUSerById(int id) {
