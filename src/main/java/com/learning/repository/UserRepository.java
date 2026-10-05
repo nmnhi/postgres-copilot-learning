@@ -8,10 +8,13 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserRepository {
 
-  @SuppressWarnings("CallToPrintStackTrace")
+  private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
+
   public void save(User user) {
     String sql = """
         INSERT INTO users(full_name, email)
@@ -30,11 +33,10 @@ public class UserRepository {
       System.out.println(rows + " row inserted");
 
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Failed to create new user", e);
     }
   }
 
-  @SuppressWarnings("CallToPrintStackTrace")
   public List<User> findAll() {
     List<User> users = new ArrayList<>();
 
@@ -58,13 +60,12 @@ public class UserRepository {
         users.add(user);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Cannot get all users", e);
     }
 
     return users;
   }
 
-  @SuppressWarnings("CallToPrintStackTrace")
   public void update(User user) {
     String sql = """
         UPDATE users
@@ -83,11 +84,10 @@ public class UserRepository {
       System.out.println(
           rows + " row updated");
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Failed to update user", e);
     }
   }
 
-  @SuppressWarnings("CallToPrintStackTrace")
   public void deleteById(int id) {
     String sql = """
         DELETE FROM users
@@ -101,11 +101,10 @@ public class UserRepository {
       int rows = statement.executeUpdate();
       System.out.println(rows + " row deleted");
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Failed to delete user", e);
     }
   }
 
-  @SuppressWarnings("CallToPrintStackTrace")
   public Optional<User> findById(int id) {
     String sql = """
         SELECT id, full_name, email
@@ -129,13 +128,12 @@ public class UserRepository {
         return Optional.of(user);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Cannot get user by id", e);
     }
 
     return Optional.empty();
   }
 
-  @SuppressWarnings("CallToPrintStackTrace")
   public Optional<User> findByEmail(String email) {
     String sql = """
         SELECT id, full_name, email
@@ -159,7 +157,7 @@ public class UserRepository {
         return Optional.of(user);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Cannot find user by email", e);
     }
 
     return Optional.empty();

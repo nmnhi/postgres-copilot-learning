@@ -7,12 +7,17 @@ import com.learning.exception.UserNotFoundException;
 import com.learning.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class UserService {
 
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
   private final UserRepository repository = new UserRepository();
 
   public void create(User user) {
+    logger.info("Create user with {}", user.getEmail());
     if (user.getEmail() == null || user.getEmail().isBlank()) {
       throw new RuntimeException("Email is required");
     }
